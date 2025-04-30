@@ -5,8 +5,8 @@ This project integrates a C-based Trie data structure into IRIS using `$ZF(-3)` 
 
 ## 🚀 Quick Start
 🔍 Features
-Fast prefix lookup via Trie
 
+Fast prefix lookup via Trie
 Native C extension compiled to shared lib
 
 Docker-based IRIS integration
