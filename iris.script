@@ -1,6 +1,4 @@
-ZN "USER"
-Set lib="/usr/lib/libfastlookup.so"
-Set prefix="dia"
-Set result=$ZF(-3, lib, "lookup_prefix", prefix)
-Write "Found: ", result, !
-HALT
+Do $System.OBJ.Load("PrefixTrie/Lookup.cls", "ck")
+Do $System.OBJ.Load("test/test.trie.cls", "ck")
+Do ##class(test.trie).Run()
+Halt
