@@ -1,15 +1,39 @@
-# iris-c-trie
-# High-Performance Prefix Lookup Extension for InterSystems IRIS
+# 🔍 IRIS C-Trie: High-Performance Prefix Lookup Extension for InterSystems IRIS
 
-This project integrates a C-based Trie data structure into IRIS using `$ZF(-3)` for high-speed prefix lookup.
+IRIS C-Trie is a native C extension for [InterSystems IRIS](https://www.intersystems.com/products/intersystems-iris/) that implements a **compressed trie (radix tree)** to support **fast and memory-efficient prefix-based lookups**. It's designed for applications where speed and scalability in string searches are critical — such as **auto-completion, routing, and command matching**.
 
-## 🚀 Quick Start
-🔍 Features
+---
 
-Fast prefix lookup via Trie
-Native C extension compiled to shared lib
+## 🚀 Features
 
-Docker-based IRIS integration
+- ✅ High-performance prefix search using a C-implemented compressed trie
+- ✅ Simple ObjectScript interface for easy integration with IRIS
+- ✅ Optimized for minimal memory usage
+- ✅ Designed for scalability and real-time use cases
+
+---
+
+## 🧰 Use Cases
+
+- Command-line interface matching (e.g., finding all commands starting with a prefix)
+- Auto-complete in large datasets
+- Hierarchical key-value stores or routing tables
+- Efficient search in metadata-heavy environments
+
+---
+
+## 📦 Installation
+
+### 🔧 Prerequisites
+
+- InterSystems IRIS (2021.1+ recommended)
+- GCC or Clang
+- Make
+- Linux (tested on Ubuntu)
+
+### 📥 Clone and Build
+
 ```bash
-docker build -t iris-c-trie .
-docker run -it iris-c-trie
+git clone https://github.com/kunal0297/iris-c-trie.git
+cd iris-c-trie
+make
