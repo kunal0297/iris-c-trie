@@ -1,0 +1,6 @@
+ZN "USER"
+Set lib="/usr/lib/libfastlookup.so"
+Set prefix="dia"
+Set result=$ZF(-3, lib, "lookup_prefix", prefix)
+Write "Found: ", result, !
+HALT
