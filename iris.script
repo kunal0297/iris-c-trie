@@ -1,4 +1,4 @@
-Do $System.OBJ.Load("PrefixTrie/Lookup.cls", "ck")
-Do $System.OBJ.Load("test/test.trie.cls", "ck")
+Do $System.OBJ.Load("/irisdev/app/PrefixTrie/Lookup.cls", "ck")
+Do $System.OBJ.Load("/irisdev/app/test/test.trie.cls", "ck")
 Do ##class(test.trie).Run()
 Halt
