@@ -1,3 +1,6 @@
+// How to Load It in IRIS:
+// Do $System.OBJ.Load("PrefixTrie/Lookup.cls", "ck")
+
 Class PrefixTrie.Lookup
 {
 
@@ -18,5 +21,3 @@ ClassMethod Search(prefix As %String) As %Integer
     Quit result
 }
 }
-#How to Load It in IRIS:
-#Do $System.OBJ.Load("PrefixTrie/Lookup.cls", "ck")
