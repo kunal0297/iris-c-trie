@@ -1,0 +1,29 @@
+name: Build insert.so
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'insert.c'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up GCC
+      run: sudo apt-get install gcc make
+
+    - name: Compile insert.c to insert.so
+      run: |
+        gcc -shared -o insert.so insert.c
+
+    - name: Upload insert.so as artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: insert.so
+        path: insert.so
