@@ -11,7 +11,7 @@ ClassMethod Insert(value As %String)
     }
 }
 
-ClassMethod Search(prefix As %String) As %String
+ClassMethod Search(prefix As %String) As %Integer
 {
     Set result = $ZF(-3, "search", prefix)
     Write "Search result for prefix '", prefix, "': ", result, !
