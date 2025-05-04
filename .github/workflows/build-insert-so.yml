@@ -12,18 +12,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up GCC
-      run: sudo apt-get install gcc make
+      - name: Install GCC
+        run: sudo apt-get update && sudo apt-get install -y gcc
 
-    - name: Compile insert.c to insert.so
-      run: |
-        gcc -shared -o insert.so insert.c
+      - name: Compile insert.c to insert.so
+        run: |
+          gcc -fPIC -shared -o insert.so insert.c
 
-    - name: Upload insert.so as artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: insert.so
-        path: insert.so
+      - name: Upload insert.so as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: insert-so
+          path: insert.so
