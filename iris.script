@@ -1,4 +1,19 @@
+ZN "USER"
+
+; Load the shared library
+SET sc = $ZF(-3, "/usr/lib/libfastlookup.so")
+IF sc '= 0 {
+    WRITE "ERROR loading shared library",!
+    HALT
+} ELSE {
+    WRITE "Shared library loaded successfully",!
+}
+
+; Compile ObjectScript classes
 Do $System.OBJ.Load("/irisdev/app/PrefixTrie/Lookup.cls", "ck")
 Do $System.OBJ.Load("/irisdev/app/test/test.trie.cls", "ck")
+
+; Run test class
 Do ##class(test.trie).Run()
+
 Halt
