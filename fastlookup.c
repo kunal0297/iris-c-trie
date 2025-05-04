@@ -3,19 +3,16 @@
 #include <string.h>
 #include <ctype.h>
 
-#define ALPHABET_SIZE 36 // 26 letters + 10 digits
+#define ALPHABET_SIZE 36
 #define MAX_WORD_LENGTH 100
 
-// Trie Node Structure
 typedef struct TrieNode {
     struct TrieNode* children[ALPHABET_SIZE];
     int is_end_of_word;
 } TrieNode;
 
-// Global root pointer
 static TrieNode* global_root = NULL;
 
-// Create a new Trie Node
 TrieNode* create_node() {
     TrieNode* node = (TrieNode*)malloc(sizeof(TrieNode));
     if (!node) {
@@ -28,14 +25,12 @@ TrieNode* create_node() {
     return node;
 }
 
-// Map character to index
 int char_to_index(char c) {
     if (isdigit(c)) return c - '0' + 26;
     if (isalpha(c)) return tolower(c) - 'a';
     return -1;
 }
 
-// Insert word into Trie
 void insert(TrieNode* root, const char* word) {
     TrieNode* current = root;
     while (*word) {
@@ -49,7 +44,6 @@ void insert(TrieNode* root, const char* word) {
     current->is_end_of_word = 1;
 }
 
-// Search prefix in Trie
 int search(TrieNode* root, const char* prefix) {
     TrieNode* current = root;
     while (*prefix) {
@@ -61,7 +55,6 @@ int search(TrieNode* root, const char* prefix) {
     return 1;
 }
 
-// Recursively find and print all words with a given prefix
 void find_words_with_prefix(TrieNode* root, char* buffer, int depth, FILE* out) {
     if (root->is_end_of_word) {
         buffer[depth] = '\0';
@@ -75,7 +68,6 @@ void find_words_with_prefix(TrieNode* root, char* buffer, int depth, FILE* out) 
     }
 }
 
-// Free the Trie
 void free_trie(TrieNode* root) {
     if (!root) return;
     for (int i = 0; i < ALPHABET_SIZE; i++)
@@ -83,7 +75,6 @@ void free_trie(TrieNode* root) {
     free(root);
 }
 
-// Initialize Trie (once)
 void initialize_trie() {
     if (!global_root) {
         global_root = create_node();
@@ -101,7 +92,6 @@ void initialize_trie() {
     }
 }
 
-// Cleanup function
 __attribute__((visibility("default")))
 void free_trie_memory() {
     if (global_root) {
@@ -110,9 +100,9 @@ void free_trie_memory() {
     }
 }
 
-//////////////////////////
-// $ZF(-3) Compatibility
-//////////////////////////
+///////////////////////
+// ZF Integration
+///////////////////////
 
 typedef int (*ZFFUNC)(int argc, char *argv[], char *result, int maxlen);
 
@@ -121,32 +111,31 @@ typedef struct {
     ZFFUNC func;
 } ZFTABLE;
 
-// Wrapper for lookup_prefix
-int zf_lookup_prefix(int argc, char *argv[], char *result, int maxlen) {
+// Function to insert a word
+int zf_insert_word(int argc, char *argv[], char *result, int maxlen) {
     initialize_trie();
     if (argc < 1) {
-        strncpy(result, "ERR: Missing prefix", maxlen - 1);
+        strncpy(result, "ERR: Missing word", maxlen - 1);
         result[maxlen - 1] = '\0';
         return 1;
     }
-    int found = search(global_root, argv[0]);
-    snprintf(result, maxlen, "%d", found);
+    insert(global_root, argv[0]);
+    snprintf(result, maxlen, "Inserted: %s", argv[0]);
     return 0;
 }
 
-// Wrapper for printing words (limited to 1 line in result)
-int zf_get_words(int argc, char *argv[], char *result, int maxlen) {
+// Function to search a prefix
+int zf_search_prefix(int argc, char *argv[], char *result, int maxlen) {
     initialize_trie();
-    TrieNode* current = global_root;
-    char buffer[MAX_WORD_LENGTH];
-    int depth = 0;
-
     if (argc < 1) {
         strncpy(result, "ERR: Missing prefix", maxlen - 1);
         result[maxlen - 1] = '\0';
         return 1;
     }
 
+    TrieNode* current = global_root;
+    char buffer[MAX_WORD_LENGTH];
+    int depth = 0;
     const char *prefix = argv[0];
 
     while (*prefix) {
@@ -162,25 +151,29 @@ int zf_get_words(int argc, char *argv[], char *result, int maxlen) {
 
     FILE* temp = tmpfile();
     if (!temp) {
-        strncpy(result, "ERR: Unable to create temp file", maxlen - 1);
+        strncpy(result, "ERR: Temp file error", maxlen - 1);
+        result[maxlen - 1] = '\0';
         return 1;
     }
 
     find_words_with_prefix(current, buffer, depth, temp);
     rewind(temp);
-    fgets(result, maxlen, temp); // Return only the first match
+    if (!fgets(result, maxlen, temp)) {
+        strncpy(result, "No matches found", maxlen - 1);
+        result[maxlen - 1] = '\0';
+    } else {
+        result[strcspn(result, "\n")] = '\0'; // Remove newline
+    }
     fclose(temp);
     return 0;
 }
 
-// Function table for $ZF(-3)
 ZFTABLE zfTable[] = {
-    { "LOOKUP", zf_lookup_prefix },
-    { "WORDS", zf_get_words },
+    { "insert", zf_insert_word },
+    { "search", zf_search_prefix },
     { NULL, NULL }
 };
 
-// Entry point for $ZF(-3)
 __attribute__((visibility("default")))
 ZFTABLE* GetZFTable() {
     return zfTable;
