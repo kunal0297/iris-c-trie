@@ -4,7 +4,6 @@ Class PrefixTrie.Lookup
 ClassMethod Initialize() As %Status
 {
     If '$Data(^PrefixTrieLibLoaded) {
-        // Load the shared library
         Set sc = $ZF(-3, "/usr/lib/libfastlookup.so")
         If sc = 0 {
             Write "Shared library loaded successfully", !
@@ -21,13 +20,10 @@ ClassMethod Initialize() As %Status
 ClassMethod Insert(value As %String) As %Status
 {
     Set sc = ..Initialize()
-    If $$$ISERR(sc) {
-        Quit sc
-    }
+    If $$$ISERR(sc) Quit sc
 
     New result
     Set result = $ZF(-3, "insert", value)
-
     If result = 0 {
         Write "Inserted: ", value, !
         Quit $$$OK
@@ -47,7 +43,6 @@ ClassMethod Search(prefix As %String) As %Status
 
     New result
     Set result = $ZF(-3, "search", prefix)
-
     If result '= "" {
         Write "First match for prefix '", prefix, "': ", result, !
     } Else {
