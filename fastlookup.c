@@ -13,7 +13,7 @@ typedef struct TrieNode {
 
 static TrieNode* global_root = NULL;
 
-// Helper functions
+// Helper to create a new Trie node
 TrieNode* create_node() {
     TrieNode* node = (TrieNode*)malloc(sizeof(TrieNode));
     if (!node) {
@@ -68,7 +68,7 @@ void find_words_with_prefix(TrieNode* root, char* buffer, int depth, FILE* out) 
 void initialize_trie() {
     if (!global_root) {
         global_root = create_node();
-        // preload some values
+        // preload some default words
         insert(global_root, "diabetes");
         insert(global_root, "diagnosis");
         insert(global_root, "dialysis");
@@ -91,9 +91,9 @@ void free_trie_memory() {
     }
 }
 
-///////////////////////
-// ZF Integration
-///////////////////////
+/////////////////////////
+// ZF Integration Logic
+/////////////////////////
 
 typedef int (*ZFFUNC)(int argc, char *argv[], char *result, int maxlen);
 
@@ -102,7 +102,7 @@ typedef struct {
     ZFFUNC func;
 } ZFTABLE;
 
-// Insert word function
+// Insert word method
 int zf_insert_word(int argc, char *argv[], char *result, int maxlen) {
     initialize_trie();
 
@@ -116,7 +116,7 @@ int zf_insert_word(int argc, char *argv[], char *result, int maxlen) {
     return 0;
 }
 
-// Search prefix function
+// Prefix search method
 int zf_search_prefix(int argc, char *argv[], char *result, int maxlen) {
     initialize_trie();
 
@@ -152,21 +152,20 @@ int zf_search_prefix(int argc, char *argv[], char *result, int maxlen) {
     if (!fgets(result, maxlen, temp)) {
         snprintf(result, maxlen, "No matches found");
     } else {
-        result[strcspn(result, "\n")] = '\0'; // remove newline
+        result[strcspn(result, "\n")] = '\0'; // strip newline
     }
 
     fclose(temp);
     return 0;
 }
 
-// Table of exported functions
+// Exported ZF function table
 static ZFTABLE zfTable[] = {
     { "insert", zf_insert_word },
     { "search", zf_search_prefix },
     { NULL, NULL }
 };
 
-// Required export for IRIS
 __attribute__((visibility("default")))
 ZFTABLE* GetZFTable() {
     return zfTable;
