@@ -20,7 +20,7 @@ jobs:
 
       - name: Compile insert.c to insert.so
         run: |
-          gcc -fPIC -shared -o insert.so insert.c
+          gcc -Wall -fPIC -shared -o insert.so insert.c
 
       - name: Upload insert.so as artifact
         uses: actions/upload-artifact@v3
