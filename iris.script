@@ -9,16 +9,22 @@ IF sc '= 0 {
     WRITE "Shared library loaded successfully",!
 }
 
-WRITE "== Compiling Lookup.cls ==",!
+WRITE "== Compiling PrefixTrie/Lookup.cls ==",!
 SET sc = ##class(%SYSTEM.OBJ).Load("/irisdev/app/PrefixTrie/Lookup.cls", "ck")
 IF $System.Status.IsError(sc) {
     WRITE "ERROR: Failed to compile Lookup.cls",!
+    HALT
+} ELSE {
+    WRITE "Lookup.cls compiled successfully",!
 }
 
-WRITE "== Compiling test.trie.cls ==",!
+WRITE "== Compiling test/test.trie.cls ==",!
 SET sc = ##class(%SYSTEM.OBJ).Load("/irisdev/app/test/test.trie.cls", "ck")
 IF $System.Status.IsError(sc) {
     WRITE "ERROR: Failed to compile test.trie.cls",!
+    HALT
+} ELSE {
+    WRITE "test.trie.cls compiled successfully",!
 }
 
 WRITE "== Running test ==",!
