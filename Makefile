@@ -1,12 +1,16 @@
-CC = gcc
-CFLAGS = -fPIC -shared
-TARGET = insert.so
-SRC = insert.c
+CC := gcc
+CFLAGS := -Wall -Wextra -O2 -fPIC -shared
+TARGET := insert.so
+SRC := insert.c
+OBJ := $(SRC:.c=.o)
+
+.PHONY: all clean
 
 all: $(TARGET)
 
 $(TARGET): $(SRC)
-	$(CC) $(CFLAGS) -o $(TARGET) $(SRC)
+	$(CC) $(CFLAGS) -o $@ $<
 
 clean:
-	rm -f $(TARGET)
+	@echo "Cleaning up..."
+	@rm -f $(TARGET) $(OBJ)
