@@ -4,20 +4,12 @@ Class test.trie
 ClassMethod Run()
 {
     Write !, "== Inserting Words ==", !
-    Set sc = ##class(PrefixTrie.Lookup).Insert("kunal")
-    If $$$ISERR(sc) Quit
-
-    Set sc = ##class(PrefixTrie.Lookup).Insert("kumar")
-    If $$$ISERR(sc) Quit
-
-    Set sc = ##class(PrefixTrie.Lookup).Insert("karma")
-    If $$$ISERR(sc) Quit
-
-    Set sc = ##class(PrefixTrie.Lookup).Insert("karan")
-    If $$$ISERR(sc) Quit
+    Set sc = ##class(PrefixTrie.Lookup).Insert("kunal") If $$$ISERR(sc) Quit
+    Set sc = ##class(PrefixTrie.Lookup).Insert("kumar") If $$$ISERR(sc) Quit
+    Set sc = ##class(PrefixTrie.Lookup).Insert("karma") If $$$ISERR(sc) Quit
+    Set sc = ##class(PrefixTrie.Lookup).Insert("karan") If $$$ISERR(sc) Quit
 
     Write !, "== Running Searches ==", !
-
     Do ..SearchAndShow("ku")
     Do ..SearchAndShow("ka")
     Do ..SearchAndShow("k")
