@@ -1,27 +1,39 @@
 Class test.trie
 {
-    ClassMethod Run()
-    {
-        // Insert words into the PrefixTrie
-        Do ##class(PrefixTrie.Lookup).Insert("kunal")
-        Do ##class(PrefixTrie.Lookup).Insert("kumar")
-        Do ##class(PrefixTrie.Lookup).Insert("karma")
-        Do ##class(PrefixTrie.Lookup).Insert("karan")
 
-        // Test searching for different prefixes
-        Write !, "Search for 'ku':"
-        Do ##class(PrefixTrie.Lookup).Search("ku")  // Should return matches for "kunal", "kumar"
+ClassMethod Run()
+{
+    Write !, "== Inserting Words ==", !
+    Set sc = ##class(PrefixTrie.Lookup).Insert("kunal")
+    If $$$ISERR(sc) Quit
 
-        Write !, "Search for 'ka':"
-        Do ##class(PrefixTrie.Lookup).Search("ka")  // Should return matches for "karma", "karan"
+    Set sc = ##class(PrefixTrie.Lookup).Insert("kumar")
+    If $$$ISERR(sc) Quit
 
-        Write !, "Search for 'k':"
-        Do ##class(PrefixTrie.Lookup).Search("k")   // Should return all matches: "kunal", "kumar", "karma", "karan"
+    Set sc = ##class(PrefixTrie.Lookup).Insert("karma")
+    If $$$ISERR(sc) Quit
 
-        Write !, "Search for 'x':"
-        Do ##class(PrefixTrie.Lookup).Search("x")   // No match, should handle gracefully
+    Set sc = ##class(PrefixTrie.Lookup).Insert("karan")
+    If $$$ISERR(sc) Quit
 
-        Write !, "Search for an empty prefix '':"
-        Do ##class(PrefixTrie.Lookup).Search("")    // Edge case for empty prefix, handle as needed
+    Write !, "== Running Searches ==", !
+
+    Do ..SearchAndShow("ku")
+    Do ..SearchAndShow("ka")
+    Do ..SearchAndShow("k")
+    Do ..SearchAndShow("x")
+    Do ..SearchAndShow("")
+}
+
+ClassMethod SearchAndShow(prefix As %String)
+{
+    Write !, "Searching for prefix: '", prefix, "'", !
+    Set result = $ZF(-3, "search", prefix)
+    If result '= "" {
+        Write "First match: ", result, !
+    } Else {
+        Write "No match found.", !
     }
+}
+
 }
