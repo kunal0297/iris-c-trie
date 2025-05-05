@@ -9,11 +9,19 @@ IF sc '= 0 {
     WRITE "Shared library loaded successfully",!
 }
 
-; Compile ObjectScript classes
-Do $System.OBJ.Load("/irisdev/app/PrefixTrie/Lookup.cls", "ck")
-Do $System.OBJ.Load("/irisdev/app/test/test.trie.cls", "ck")
+; Compile Lookup class
+SET sc = ##class(%SYSTEM.OBJ).Load("/irisdev/app/PrefixTrie/Lookup.cls", "ck")
+IF sc '= 1 {
+    WRITE "Failed to compile Lookup.cls",!
+}
 
-; Run test class
-Do ##class(test.trie).Run()
+; Compile test class
+SET sc = ##class(%SYSTEM.OBJ).Load("/irisdev/app/test/test.trie.cls", "ck")
+IF sc '= 1 {
+    WRITE "Failed to compile test.trie.cls",!
+}
 
-Halt
+; Run test
+DO ##class(test.trie).Run()
+
+HALT
