@@ -13,6 +13,7 @@ typedef struct TrieNode {
 
 static TrieNode* global_root = NULL;
 
+// Helper functions
 TrieNode* create_node() {
     TrieNode* node = (TrieNode*)malloc(sizeof(TrieNode));
     if (!node) {
@@ -44,15 +45,11 @@ void insert(TrieNode* root, const char* word) {
     current->is_end_of_word = 1;
 }
 
-int search(TrieNode* root, const char* prefix) {
-    TrieNode* current = root;
-    while (*prefix) {
-        int index = char_to_index(*prefix);
-        if (index == -1 || !current->children[index]) return 0;
-        current = current->children[index];
-        prefix++;
-    }
-    return 1;
+void free_trie(TrieNode* root) {
+    if (!root) return;
+    for (int i = 0; i < ALPHABET_SIZE; i++)
+        free_trie(root->children[i]);
+    free(root);
 }
 
 void find_words_with_prefix(TrieNode* root, char* buffer, int depth, FILE* out) {
@@ -68,16 +65,10 @@ void find_words_with_prefix(TrieNode* root, char* buffer, int depth, FILE* out) 
     }
 }
 
-void free_trie(TrieNode* root) {
-    if (!root) return;
-    for (int i = 0; i < ALPHABET_SIZE; i++)
-        free_trie(root->children[i]);
-    free(root);
-}
-
 void initialize_trie() {
     if (!global_root) {
         global_root = create_node();
+        // preload some values
         insert(global_root, "diabetes");
         insert(global_root, "diagnosis");
         insert(global_root, "dialysis");
@@ -111,25 +102,26 @@ typedef struct {
     ZFFUNC func;
 } ZFTABLE;
 
-// Function to insert a word
+// Insert word function
 int zf_insert_word(int argc, char *argv[], char *result, int maxlen) {
     initialize_trie();
-    if (argc < 1) {
-        strncpy(result, "ERR: Missing word", maxlen - 1);
-        result[maxlen - 1] = '\0';
+
+    if (argc < 1 || !argv[0]) {
+        snprintf(result, maxlen, "ERR: Missing word");
         return 1;
     }
+
     insert(global_root, argv[0]);
     snprintf(result, maxlen, "Inserted: %s", argv[0]);
     return 0;
 }
 
-// Function to search a prefix
+// Search prefix function
 int zf_search_prefix(int argc, char *argv[], char *result, int maxlen) {
     initialize_trie();
-    if (argc < 1) {
-        strncpy(result, "ERR: Missing prefix", maxlen - 1);
-        result[maxlen - 1] = '\0';
+
+    if (argc < 1 || !argv[0]) {
+        snprintf(result, maxlen, "ERR: Missing prefix");
         return 1;
     }
 
@@ -151,29 +143,30 @@ int zf_search_prefix(int argc, char *argv[], char *result, int maxlen) {
 
     FILE* temp = tmpfile();
     if (!temp) {
-        strncpy(result, "ERR: Temp file error", maxlen - 1);
-        result[maxlen - 1] = '\0';
+        snprintf(result, maxlen, "ERR: Temp file error");
         return 1;
     }
 
     find_words_with_prefix(current, buffer, depth, temp);
     rewind(temp);
     if (!fgets(result, maxlen, temp)) {
-        strncpy(result, "No matches found", maxlen - 1);
-        result[maxlen - 1] = '\0';
+        snprintf(result, maxlen, "No matches found");
     } else {
-        result[strcspn(result, "\n")] = '\0'; // Remove newline
+        result[strcspn(result, "\n")] = '\0'; // remove newline
     }
+
     fclose(temp);
     return 0;
 }
 
-ZFTABLE zfTable[] = {
+// Table of exported functions
+static ZFTABLE zfTable[] = {
     { "insert", zf_insert_word },
     { "search", zf_search_prefix },
     { NULL, NULL }
 };
 
+// Required export for IRIS
 __attribute__((visibility("default")))
 ZFTABLE* GetZFTable() {
     return zfTable;
