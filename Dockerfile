@@ -1,31 +1,31 @@
 FROM intersystemsdc/iris-community:latest
 
-# Switch to root to install build tools
+# Switch to root for software installation
 USER root
 
-# Install gcc, compile shared object, and clean up
+# Install GCC to compile shared object
 RUN apt-get update && \
     apt-get install -y gcc && \
     rm -rf /var/lib/apt/lists/*
 
-# Copy and compile C source code
+# Copy C source and compile shared object
 COPY fastlookup.c /opt/fastlookup.c
 RUN gcc -Wall -fPIC -shared -o /usr/lib/libfastlookup.so /opt/fastlookup.c && \
     chmod 755 /usr/lib/libfastlookup.so && \
     rm /opt/fastlookup.c
 
-# Set library path
+# Ensure shared library is discoverable
 ENV LD_LIBRARY_PATH="/usr/lib:$LD_LIBRARY_PATH"
 
-# Switch back to irisowner
+# Return to irisowner user
 USER irisowner
 
-# Copy ObjectScript source and script
+# Copy your ObjectScript source and initialization script
 COPY PrefixTrie /irisdev/app/PrefixTrie
 COPY test /irisdev/app/test
 COPY iris.script /tmp/iris.script
 
-# Compile ObjectScript during build
+# Run ObjectScript compilation
 RUN iris start iris && \
     iris session iris < /tmp/iris.script && \
     iris stop iris quietly
