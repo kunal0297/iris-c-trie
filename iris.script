@@ -1,27 +1,27 @@
 ZN "USER"
 
-; Load the shared library
+WRITE "== Loading shared library ==",!
 SET sc = $ZF(-3, "/usr/lib/libfastlookup.so")
 IF sc '= 0 {
-    WRITE "ERROR loading shared library",!
+    WRITE "ERROR: Failed to load shared library",!
     HALT
 } ELSE {
     WRITE "Shared library loaded successfully",!
 }
 
-; Compile Lookup class
+WRITE "== Compiling Lookup.cls ==",!
 SET sc = ##class(%SYSTEM.OBJ).Load("/irisdev/app/PrefixTrie/Lookup.cls", "ck")
-IF sc '= 1 {
-    WRITE "Failed to compile Lookup.cls",!
+IF $System.Status.IsError(sc) {
+    WRITE "ERROR: Failed to compile Lookup.cls",!
 }
 
-; Compile test class
+WRITE "== Compiling test.trie.cls ==",!
 SET sc = ##class(%SYSTEM.OBJ).Load("/irisdev/app/test/test.trie.cls", "ck")
-IF sc '= 1 {
-    WRITE "Failed to compile test.trie.cls",!
+IF $System.Status.IsError(sc) {
+    WRITE "ERROR: Failed to compile test.trie.cls",!
 }
 
-; Run test
+WRITE "== Running test ==",!
 DO ##class(test.trie).Run()
 
 HALT
